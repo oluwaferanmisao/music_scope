@@ -34,6 +34,17 @@
   color: var(--text-muted);
 }
 
+.artist-link {
+  color: var(--accent);
+  text-decoration: none;
+  transition: opacity 180ms ease;
+}
+
+.artist-link:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
 .song-card-content span {
   font-size: 0.85rem;
 }

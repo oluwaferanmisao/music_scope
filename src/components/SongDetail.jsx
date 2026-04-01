@@ -28,7 +28,30 @@ function CreditsGroup({ title, values }) {
   return (
     <div className="credits-group">
       <h4>{title}</h4>
-      {values?.length ? <p>{values.join(', ')}</p> : <p>Credits unavailable</p>}
+      {values?.length ? (
+        <p>
+          {values.map((item, idx) => {
+            const isObject = typeof item === 'object'
+            const name = isObject ? item.name : item
+            const url = isObject ? item.url : null
+
+            return (
+              <span key={idx}>
+                {url ? (
+                  <a href={url} target="_blank" rel="noopener noreferrer" className="artist-link">
+                    {name}
+                  </a>
+                ) : (
+                  name
+                )}
+                {idx < values.length - 1 ? ', ' : ''}
+              </span>
+            )
+          })}
+        </p>
+      ) : (
+        <p>Credits unavailable</p>
+      )}
     </div>
   )
 }
@@ -56,7 +79,21 @@ function SongDetail({ track, audioFeatures, credits }) {
         <div>
           <p className="eyebrow">Now inspecting</p>
           <h1>{track.name}</h1>
-          <p>{track.artists?.map((artist) => artist.name).join(', ')}</p>
+          <p>
+            {track.artists?.map((artist, idx) => (
+              <span key={artist.id || idx}>
+                <a
+                  href={artist.external_urls?.spotify}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="artist-link"
+                >
+                  {artist.name}
+                </a>
+                {idx < track.artists.length - 1 ? ', ' : ''}
+              </span>
+            ))}
+          </p>
           <div className="badge-row">
             <span className="badge">{formatMusicalKey(audioFeatures?.key, audioFeatures?.mode)}</span>
             <span className="badge">{formatTimeSignature(audioFeatures?.time_signature)}</span>

@@ -58,12 +58,18 @@ export function extractCredits(song) {
   }
 
   const writers = (song.writer_artists || [])
-    .map((artist) => artist?.name)
-    .filter(Boolean)
+    .map((artist) => ({
+      name: artist?.name,
+      url: artist?.url,
+    }))
+    .filter((item) => item.name)
 
   const producers = (song.producer_artists || [])
-    .map((artist) => artist?.name)
-    .filter(Boolean)
+    .map((artist) => ({
+      name: artist?.name,
+      url: artist?.url,
+    }))
+    .filter((item) => item.name)
 
   const distributionCompany = extractDistribution(song)
 
