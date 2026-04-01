@@ -1,0 +1,89 @@
+.song-card {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  gap: 0.8rem;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+  padding: 0.65rem;
+  cursor: pointer;
+  transition: transform 220ms ease, border-color 220ms ease;
+}
+
+.song-card:hover,
+.song-card:focus-visible {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.song-card img {
+  width: 88px;
+  height: 88px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.song-card-content h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.song-card-content p {
+  margin: 0.2rem 0;
+  color: var(--text-muted);
+}
+
+.song-card-content span {
+  font-size: 0.85rem;
+}
+
+.skeleton-list {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.skeleton-card,
+.skeleton-title,
+.skeleton-block {
+  background: linear-gradient(90deg, var(--surface) 0%, var(--surface-soft) 50%, var(--surface) 100%);
+  background-size: 200% 100%;
+  border-radius: 14px;
+}
+
+.skeleton-card {
+  height: 88px;
+}
+
+.skeleton-detail {
+  display: grid;
+  gap: 1rem;
+}
+
+.skeleton-title {
+  height: 54px;
+}
+
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.8rem;
+}
+
+.skeleton-block {
+  height: 120px;
+}
+
+.shimmer {
+  animation: shimmer 1.2s infinite linear;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: -200% 0;
+  }
+}

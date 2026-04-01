@@ -1,0 +1,76 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap');
+
+:root {
+  --bg: #f6f2ea;
+  --surface: #fffaf2;
+  --surface-soft: #efe6d8;
+  --text-primary: #1f2518;
+  --text-muted: #5f6456;
+  --border: #d9d2c4;
+  --accent: #ea6a45;
+  --accent-alt: #2da287;
+  --danger: #b42318;
+  --font-body: 'IBM Plex Sans', 'Segoe UI', sans-serif;
+  --font-heading: 'Space Grotesk', 'Segoe UI', sans-serif;
+}
+
+:root[data-theme='dark'] {
+  --bg: #131a1f;
+  --surface: #1b242b;
+  --surface-soft: #27323c;
+  --text-primary: #eff3f6;
+  --text-muted: #a4b0ba;
+  --border: #2f3a43;
+  --accent: #f18f6f;
+  --accent-alt: #55c8ae;
+  --danger: #f97066;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--text-primary);
+  background:
+    radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 32%),
+    radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--accent-alt) 12%, transparent), transparent 34%),
+    var(--bg);
+  line-height: 1.5;
+  transition: background-color 260ms ease, color 260ms ease;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-heading);
+}
+
+a {
+  color: inherit;
+}
+
+.brand-link {
+  text-decoration: none;
+}
+
+@media (max-width: 720px) {
+  .app-shell {
+    width: min(1100px, 100% - 1.2rem);
+  }
+
+  .app-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.8rem;
+  }
+}
