@@ -49,8 +49,22 @@ function extractDistribution(song) {
 }
 
 export function extractCredits(song) {
-  const writers = (song?.writer_artists ?? []).map((artist) => artist.name)
-  const producers = (song?.producer_artists ?? []).map((artist) => artist.name)
+  if (!song) {
+    return {
+      writers: [],
+      producers: [],
+      distributionCompany: null,
+    }
+  }
+
+  const writers = (song.writer_artists || [])
+    .map((artist) => artist?.name)
+    .filter(Boolean)
+
+  const producers = (song.producer_artists || [])
+    .map((artist) => artist?.name)
+    .filter(Boolean)
+
   const distributionCompany = extractDistribution(song)
 
   return {
@@ -78,7 +92,13 @@ export async function getGeniusSong(songId) {
     headers: getGeniusHeaders(),
   })
 
-  return response.data.response?.song
+  const song = response.data.response?.song
+
+  if (!song) {
+    return null
+  }
+
+  return song
 }
 
 export async function findGeniusMatch(trackName, artistName) {

@@ -62,7 +62,8 @@ function Song() {
           return
         }
 
-        setCredits(extractCredits(geniusSong))
+        const extractedCredits = extractCredits(geniusSong)
+        setCredits(extractedCredits)
       } catch (error) {
         setErrorMessage(
           error?.response?.data?.error_description ||
