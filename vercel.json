@@ -9,6 +9,10 @@
       "destination": "https://api.deezer.com/:path*"
     },
     {
+      "source": "/api/genius/:path*",
+      "destination": "https://api.genius.com/:path*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

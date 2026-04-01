@@ -53,6 +53,7 @@ function mapDeezerToAudioMetrics(track) {
 
   const normalizedTempo = Number.isFinite(tempo) && tempo > 0 ? tempo : null
   const normalizedLoudness = Number.isFinite(loudness) ? loudness : null
+  const previewUrl = track?.preview || null
 
   return {
     source: 'deezer',
@@ -63,6 +64,12 @@ function mapDeezerToAudioMetrics(track) {
     loudness: normalizedLoudness,
     energy: estimateEnergy(normalizedTempo, normalizedLoudness),
     isEstimatedEnergy: true,
+    preview: previewUrl
+      ? {
+          provider: 'deezer',
+          url: previewUrl,
+        }
+      : null,
   }
 }
 

@@ -131,6 +131,24 @@ function SongDetail({ track, audioFeatures, credits }) {
           />
         </div>
       </section>
+
+      <section className="detail-section">
+        <h2>Music Preview</h2>
+        {credits?.preview?.url ? (
+          <p className="preview-note">
+            <a
+              href={credits.preview.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="artist-link"
+            >
+              Open preview on {credits.preview.provider}
+            </a>
+          </p>
+        ) : (
+          <p className="audio-unavailable">Preview unavailable for this track from Genius and Deezer.</p>
+        )}
+      </section>
     </article>
   )
 }

@@ -48,12 +48,18 @@ function Song() {
           return
         }
 
-        setAudioFeatures(deezerResult.status === 'fulfilled' ? deezerResult.value : null)
+        const deezerMetrics = deezerResult.status === 'fulfilled' ? deezerResult.value : null
+        setAudioFeatures(deezerMetrics)
 
         const geniusMatch = geniusResult.status === 'fulfilled' ? geniusResult.value : null
 
         if (!geniusMatch?.id) {
-          setCredits({ writers: [], producers: [], distributionCompany: null })
+          setCredits({
+            writers: [],
+            producers: [],
+            distributionCompany: null,
+            preview: deezerMetrics?.preview || null,
+          })
           return
         }
 
@@ -63,7 +69,10 @@ function Song() {
         }
 
         const extractedCredits = extractCredits(geniusSong)
-        setCredits(extractedCredits)
+        setCredits({
+          ...extractedCredits,
+          preview: extractedCredits.preview || deezerMetrics?.preview || null,
+        })
       } catch (error) {
         setErrorMessage(
           error?.response?.data?.error_description ||
