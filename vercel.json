@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/spotify-token",
+      "destination": "/api/spotify-token.js"
+    },
+    {
+      "source": "/api/deezer/:path*",
+      "destination": "https://api.deezer.com/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
