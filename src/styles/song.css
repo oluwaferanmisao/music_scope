@@ -29,6 +29,26 @@
   font-size: clamp(1.6rem, 4vw, 2.5rem);
 }
 
+.song-detail-meta {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.song-detail-info {
+  flex: 1;
+}
+
+.song-preview-action {
+  align-self: flex-end;
+}
+
+.song-preview-action {
+  display: flex;
+  align-items: flex-start;
+}
+
 .badge-row {
   display: flex;
   flex-wrap: wrap;
@@ -101,6 +121,71 @@
   color: var(--text-muted);
 }
 
+.preview-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.preview-button {
+  border: 1px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  color: var(--text-primary);
+  border-radius: 999px;
+  width: 44px;
+  height: 44px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.preview-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.preview-button-link {
+  border: 1px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  color: var(--text-primary);
+  border-radius: 999px;
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.waveform {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 0.14rem;
+  height: 18px;
+}
+
+.waveform span {
+  width: 3px;
+  height: 6px;
+  border-radius: 6px;
+  background: var(--accent-alt);
+  animation: wavePulse 720ms ease-in-out infinite;
+}
+
+@keyframes wavePulse {
+  0%,
+  100% {
+    height: 5px;
+  }
+
+  50% {
+    height: 16px;
+  }
+}
+
 .credits-layout {
   display: grid;
   gap: 0.65rem;
@@ -125,5 +210,9 @@
 @media (max-width: 840px) {
   .song-detail-header {
     grid-template-columns: 1fr;
+  }
+
+  .song-detail-meta {
+    flex-direction: column;
   }
 }

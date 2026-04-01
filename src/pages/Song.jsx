@@ -12,6 +12,26 @@ import {
   getGeniusSong,
 } from '../api/genius'
 
+function isDirectAudioUrl(url) {
+  if (!url || typeof url !== 'string') {
+    return false
+  }
+
+  return /(\.mp3|\.m4a|\.ogg|\.wav)(\?|$)/i.test(url) || url.includes('dzcdn.net')
+}
+
+function pickPreferredPreview(geniusPreview, deezerPreview) {
+  if (isDirectAudioUrl(geniusPreview?.url)) {
+    return geniusPreview
+  }
+
+  if (isDirectAudioUrl(deezerPreview?.url)) {
+    return deezerPreview
+  }
+
+  return geniusPreview || deezerPreview || null
+}
+
 function Song() {
   const { spotifyId } = useParams()
   const location = useLocation()
@@ -58,7 +78,7 @@ function Song() {
             writers: [],
             producers: [],
             distributionCompany: null,
-            preview: deezerMetrics?.preview || null,
+            preview: pickPreferredPreview(null, deezerMetrics?.preview || null),
           })
           return
         }
@@ -71,7 +91,10 @@ function Song() {
         const extractedCredits = extractCredits(geniusSong)
         setCredits({
           ...extractedCredits,
-          preview: extractedCredits.preview || deezerMetrics?.preview || null,
+          preview: pickPreferredPreview(
+            extractedCredits.preview || null,
+            deezerMetrics?.preview || null,
+          ),
         })
       } catch (error) {
         setErrorMessage(

@@ -1,3 +1,5 @@
+import { useRef, useState } from 'react'
+import { Play, Pause, ExternalLink } from 'lucide-react'
 import { formatMusicalKey, formatTimeSignature, normalizeEnergy } from '../utils/music'
 
 function MetricBar({ label, value, max = 100, unit = '' }) {
@@ -56,6 +58,93 @@ function CreditsGroup({ title, values }) {
   )
 }
 
+function isDirectAudioUrl(url) {
+  if (!url || typeof url !== 'string') {
+    return false
+  }
+
+  return /(\.mp3|\.m4a|\.ogg|\.wav)(\?|$)/i.test(url) || url.includes('dzcdn.net')
+}
+
+function PreviewPlayer({ preview }) {
+  const audioRef = useRef(null)
+  const [isPlaying, setIsPlaying] = useState(false)
+
+  const canPlayInline = isDirectAudioUrl(preview?.url)
+
+  async function handleTogglePreview() {
+    if (!audioRef.current) {
+      return
+    }
+
+    if (isPlaying) {
+      audioRef.current.pause()
+      setIsPlaying(false)
+      return
+    }
+
+    try {
+      await audioRef.current.play()
+      setIsPlaying(true)
+    } catch {
+      setIsPlaying(false)
+    }
+  }
+
+  if (!preview?.url) {
+    return (
+      <button type="button" className="preview-button" disabled title="Preview unavailable" aria-label="Preview unavailable">
+        <Pause size={20} />
+      </button>
+    )
+  }
+
+  if (!canPlayInline) {
+    return (
+      <a
+        href={preview.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="preview-button-link"
+        title="Open preview"
+        aria-label="Open preview"
+      >
+        <ExternalLink size={20} />
+      </a>
+    )
+  }
+
+  return (
+    <div className="preview-inline">
+      <audio
+        ref={audioRef}
+        src={preview.url}
+        preload="none"
+        onEnded={() => setIsPlaying(false)}
+        onPause={() => setIsPlaying(false)}
+      />
+      <button
+        type="button"
+        className="preview-button"
+        onClick={handleTogglePreview}
+        title={isPlaying ? 'Pause preview' : 'Play preview'}
+        aria-label={isPlaying ? 'Pause preview' : 'Play preview'}
+      >
+        {isPlaying ? <Pause size={20} /> : <Play size={20} />}
+      </button>
+      {isPlaying ? (
+        <div className="waveform" aria-hidden="true">
+          <span style={{ animationDelay: '0ms' }} />
+          <span style={{ animationDelay: '70ms' }} />
+          <span style={{ animationDelay: '140ms' }} />
+          <span style={{ animationDelay: '210ms' }} />
+          <span style={{ animationDelay: '280ms' }} />
+        </div>
+      ) : null}
+    </div>
+  )
+}
+
 function SongDetail({ track, audioFeatures, credits }) {
   const hasAudioFeatures = Boolean(audioFeatures)
   const energy = typeof audioFeatures?.energy === 'number'
@@ -76,27 +165,32 @@ function SongDetail({ track, audioFeatures, credits }) {
           alt={`${track.name} cover art`}
           className="song-detail-cover"
         />
-        <div>
-          <p className="eyebrow">Now inspecting</p>
-          <h1>{track.name}</h1>
-          <p>
-            {track.artists?.map((artist, idx) => (
-              <span key={artist.id || idx}>
-                <a
-                  href={artist.external_urls?.spotify}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="artist-link"
-                >
-                  {artist.name}
-                </a>
-                {idx < track.artists.length - 1 ? ', ' : ''}
-              </span>
-            ))}
-          </p>
-          <div className="badge-row">
-            <span className="badge">{formatMusicalKey(audioFeatures?.key, audioFeatures?.mode)}</span>
-            <span className="badge">{formatTimeSignature(audioFeatures?.time_signature)}</span>
+        <div className="song-detail-meta">
+          <div className="song-detail-info">
+            <p className="eyebrow">Now inspecting</p>
+            <h1>{track.name}</h1>
+            <p>
+              {track.artists?.map((artist, idx) => (
+                <span key={artist.id || idx}>
+                  <a
+                    href={artist.external_urls?.spotify}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="artist-link"
+                  >
+                    {artist.name}
+                  </a>
+                  {idx < track.artists.length - 1 ? ', ' : ''}
+                </span>
+              ))}
+            </p>
+            <div className="badge-row">
+              <span className="badge">{formatMusicalKey(audioFeatures?.key, audioFeatures?.mode)}</span>
+              <span className="badge">{formatTimeSignature(audioFeatures?.time_signature)}</span>
+            </div>
+          </div>
+          <div className="song-preview-action">
+            <PreviewPlayer preview={credits?.preview} />
           </div>
         </div>
       </header>
@@ -132,23 +226,6 @@ function SongDetail({ track, audioFeatures, credits }) {
         </div>
       </section>
 
-      <section className="detail-section">
-        <h2>Music Preview</h2>
-        {credits?.preview?.url ? (
-          <p className="preview-note">
-            <a
-              href={credits.preview.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="artist-link"
-            >
-              Open preview on {credits.preview.provider}
-            </a>
-          </p>
-        ) : (
-          <p className="audio-unavailable">Preview unavailable for this track from Genius and Deezer.</p>
-        )}
-      </section>
     </article>
   )
 }
