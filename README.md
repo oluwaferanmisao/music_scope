@@ -25,8 +25,24 @@ MusicScope is a React + Vite music discovery app that searches Spotify tracks an
 ```
 SPOTIFY_CLIENT_ID=
 SPOTIFY_CLIENT_SECRET=
+VITE_SPOTIFY_TOKEN_ENDPOINT=/api/spotify-token
 VITE_GENIUS_ACCESS_TOKEN=
 ```
+
+## Deploy Fix For "secure backend" Error
+
+This app requires a secure backend endpoint for Spotify token exchange in production.
+
+1. Keep Spotify secrets server-side only:
+
+- `SPOTIFY_CLIENT_ID`
+- `SPOTIFY_CLIENT_SECRET`
+
+2. Ensure `/api/spotify-token` is deployed (this repo includes [api/spotify-token.js](api/spotify-token.js) for serverless platforms like Vercel).
+3. Set frontend env var `VITE_SPOTIFY_TOKEN_ENDPOINT` to your deployed token endpoint path or URL.
+4. Redeploy.
+
+If your platform is not Vercel, implement an equivalent backend route that calls `https://accounts.spotify.com/api/token` using Client Credentials and returns the token response.
 
 ## Run Locally
 

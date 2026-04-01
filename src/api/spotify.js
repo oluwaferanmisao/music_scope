@@ -10,9 +10,7 @@ const spotifyApiBase = import.meta.env.DEV
   ? '/api/spotify'
   : 'https://api.spotify.com/v1'
 
-const spotifyTokenUrl = import.meta.env.DEV
-  ? '/api/spotify-token'
-  : null
+const spotifyTokenUrl = import.meta.env.VITE_SPOTIFY_TOKEN_ENDPOINT || '/api/spotify-token'
 
 function clearTokenCache() {
   sessionStorage.removeItem(SPOTIFY_TOKEN_CACHE_KEY)
@@ -57,22 +55,34 @@ export async function getSpotifyToken() {
     return cachedToken
   }
 
-  if (!spotifyTokenUrl) {
-    throw new Error('Spotify token exchange requires a secure backend in production mode.')
-  }
-
-  const response = await axios.post(
-    spotifyTokenUrl,
-    new URLSearchParams({ grant_type: 'client_credentials' }),
-    {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+  try {
+    const response = await axios.post(
+      spotifyTokenUrl,
+      new URLSearchParams({ grant_type: 'client_credentials' }),
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
       },
-    },
-  )
+    )
 
-  writeTokenCache(response.data.access_token, response.data.expires_in)
-  return response.data.access_token
+    writeTokenCache(response.data.access_token, response.data.expires_in)
+    return response.data.access_token
+  } catch (error) {
+    const status = error?.response?.status
+
+    if (status === 404) {
+      throw new Error(
+        'Spotify token endpoint was not found. Deploy a secure /api/spotify-token backend or set VITE_SPOTIFY_TOKEN_ENDPOINT.',
+      )
+    }
+
+    if (status === 500) {
+      throw new Error('Spotify token endpoint failed. Check backend SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET.')
+    }
+
+    throw mapSpotifyError(error)
+  }
 }
 
 function delay(ms) {
