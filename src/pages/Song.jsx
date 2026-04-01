@@ -5,6 +5,7 @@ import LoadingSkeleton from '../components/LoadingSkeleton'
 import {
   getSpotifyTrackById,
 } from '../api/spotify'
+import { getDeezerAudioMetrics } from '../api/deezer'
 import {
   extractCredits,
   findGeniusMatch,
@@ -37,16 +38,19 @@ function Song() {
 
         setTrack(resolvedTrack)
 
-        const geniusMatch = await findGeniusMatch(
-          resolvedTrack.name,
-          resolvedTrack.artists?.[0]?.name || '',
-        )
+        const artistName = resolvedTrack.artists?.[0]?.name || ''
+        const [geniusResult, deezerResult] = await Promise.allSettled([
+          findGeniusMatch(resolvedTrack.name, artistName),
+          getDeezerAudioMetrics(resolvedTrack.name, artistName),
+        ])
 
         if (ignore) {
           return
         }
 
-        setAudioFeatures(null)
+        setAudioFeatures(deezerResult.status === 'fulfilled' ? deezerResult.value : null)
+
+        const geniusMatch = geniusResult.status === 'fulfilled' ? geniusResult.value : null
 
         if (!geniusMatch?.id) {
           setCredits({ writers: [], producers: [], distributionCompany: null })

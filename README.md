@@ -5,7 +5,7 @@ MusicScope is a React + Vite music discovery app that searches Spotify tracks an
 ## Features
 
 - Live song search via Spotify
-- Audio profile section with policy-aware availability handling
+- Audio profile fallback via Deezer (`bpm` and loudness with estimated energy)
 - Credits view: Writers, Producers, Distribution Company
 - Loading skeletons and graceful error states
 - Responsive layout with light and dark themes
@@ -56,6 +56,7 @@ npm run build
 - Spotify 429 responses are retried with exponential backoff and Retry-After support.
 - Spotify integration uses OpenAPI-defined paths: /search and /tracks/{id}.
 - Spotify OpenAPI currently marks /audio-features endpoints deprecated, so this app does not call them.
+- Audio analysis fallback uses Deezer public endpoints when Spotify audio-features are unavailable.
 - For any future user-specific Spotify features, use Authorization Code with PKCE, HTTPS redirect URIs (or http://127.0.0.1 locally), and minimum required scopes.
 - In development, Vite proxy routes are used for Spotify and Genius endpoints.
 - If Genius has no available credits for a song, the UI shows Credits unavailable.

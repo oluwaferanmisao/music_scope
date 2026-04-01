@@ -36,6 +36,11 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api\/genius/, ''),
         },
+        '/api/deezer': {
+          target: 'https://api.deezer.com',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api\/deezer/, ''),
+        },
       },
     },
   }

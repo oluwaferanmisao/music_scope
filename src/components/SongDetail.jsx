@@ -1,19 +1,24 @@
 import { formatMusicalKey, formatTimeSignature, normalizeEnergy } from '../utils/music'
 
 function MetricBar({ label, value, max = 100, unit = '' }) {
-  const percentage = Math.min(100, Math.round((value / max) * 100))
+  const hasValue = typeof value === 'number' && Number.isFinite(value)
+  const percentage = hasValue
+    ? Math.min(100, Math.round((Math.max(0, value) / max) * 100))
+    : 0
 
   return (
     <div className="metric-bar">
       <div className="metric-head">
         <span>{label}</span>
         <strong>
-          {value}
-          {unit}
+          {hasValue ? `${value}${unit}` : 'N/A'}
         </strong>
       </div>
       <div className="meter-track">
-        <div className="meter-fill" style={{ width: `${percentage}%` }} />
+        <div
+          className={`meter-fill ${hasValue ? '' : 'meter-fill-empty'}`}
+          style={{ width: `${percentage}%` }}
+        />
       </div>
     </div>
   )
@@ -30,9 +35,15 @@ function CreditsGroup({ title, values }) {
 
 function SongDetail({ track, audioFeatures, credits }) {
   const hasAudioFeatures = Boolean(audioFeatures)
-  const energy = normalizeEnergy(audioFeatures?.energy)
-  const bpm = Math.round(audioFeatures?.tempo ?? 0)
-  const loudness = Math.round(audioFeatures?.loudness ?? 0)
+  const energy = typeof audioFeatures?.energy === 'number'
+    ? normalizeEnergy(audioFeatures?.energy)
+    : null
+  const bpm = typeof audioFeatures?.tempo === 'number'
+    ? Math.round(audioFeatures?.tempo)
+    : null
+  const loudness = typeof audioFeatures?.loudness === 'number'
+    ? Math.round(Math.abs(audioFeatures?.loudness))
+    : null
 
   return (
     <article className="song-detail">
@@ -59,12 +70,15 @@ function SongDetail({ track, audioFeatures, credits }) {
           <>
             <MetricBar label="BPM" value={bpm} max={220} />
             <MetricBar label="Energy" value={energy} unit="%" />
-            <MetricBar label="Loudness" value={Math.abs(loudness)} max={60} unit=" dB" />
+            <MetricBar label="Loudness" value={loudness} max={60} unit=" dB" />
+            <p className="audio-source-note">
+              Audio metrics are sourced from Deezer fallback data. Key and time signature are not
+              provided by this source, and energy is an estimate.
+            </p>
           </>
         ) : (
           <p className="audio-unavailable">
-            BPM, key, time signature, energy, and loudness are unavailable because Spotify marks
-            the audio-features endpoints as deprecated in the current OpenAPI schema.
+            Audio analysis data is currently unavailable for this track.
           </p>
         )}
       </section>
