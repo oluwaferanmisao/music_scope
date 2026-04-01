@@ -1,8 +1,6 @@
 import axios from 'axios'
 
-const deezerApiBase = import.meta.env.DEV
-  ? '/api/deezer'
-  : 'https://api.deezer.com'
+const deezerApiBase = '/api/deezer'
 
 function normalize(value) {
   return (value || '')
